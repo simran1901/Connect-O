@@ -11,6 +11,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Connect-O',
       theme: ThemeData(
+        fontFamily: 'OpenSans',
         primaryColor: Color(0xFF075E54),
         accentColor: Color(0xFF128C7E),
       ),
