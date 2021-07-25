@@ -1,3 +1,4 @@
+import 'package:connecto/screens/create_group.dart';
 import 'package:connecto/widgets/button_card.dart';
 import 'package:flutter/material.dart';
 
@@ -66,15 +67,20 @@ class _SelectContactState extends State<SelectContact> {
         ],
       ),
       body: ListView.builder(
-        itemCount: contacts.length+2,
+        itemCount: contacts.length + 2,
         itemBuilder: (BuildContext ctx, int i) {
-          if (i==0){
-            return ButtonCard(name: 'New group', icon: Icons.group);
-          }
-          else if(i==1) {
+          if (i == 0) {
+            return InkWell(
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (BuildContext ctx) => CreateGroup()));
+              },
+              child: ButtonCard(name: 'New group', icon: Icons.group),
+            );
+          } else if (i == 1) {
             return ButtonCard(name: 'New contact', icon: Icons.person_add);
           }
-          return ContactCard(contact: contacts[i-2]);
+          return ContactCard(contact: contacts[i - 2]);
         },
       ),
     );
