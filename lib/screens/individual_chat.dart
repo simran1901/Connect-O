@@ -51,7 +51,7 @@ class _IndividualChatState extends State<IndividualChat> {
                 CircleAvatar(
                   radius: 20,
                   child: Icon(
-                    widget.chat.isGroup ? Icons.groups : Icons.person,
+                    widget.chat.isGroup! ? Icons.groups : Icons.person,
                     size: 36,
                     color: Colors.white,
                   ),
@@ -84,6 +84,7 @@ class _IndividualChatState extends State<IndividualChat> {
             IconButton(icon: Icon(Icons.call), onPressed: () {}),
             PopupMenuButton(
               onSelected: (value) {},
+              padding: EdgeInsets.all(0),
               itemBuilder: (BuildContext ctx) {
                 return [
                   PopupMenuItem(

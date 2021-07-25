@@ -21,7 +21,7 @@ class CustomCard extends StatelessWidget {
             leading: CircleAvatar(
               radius: 30,
               child: Icon(
-                chat.isGroup ? Icons.groups : Icons.person,
+                chat.isGroup! ? Icons.groups : Icons.person,
                 size: 36,
                 color: Colors.white,
               ),
@@ -34,10 +34,10 @@ class CustomCard extends StatelessWidget {
             subtitle: Row(
               children: [
                 Icon(Icons.done_all),
-                Text(chat.currentMessage, style: TextStyle(fontSize: 13))
+                Text(chat.currentMessage!, style: TextStyle(fontSize: 13))
               ],
             ),
-            trailing: Text(chat.time),
+            trailing: Text(chat.time!),
           ),
           Padding(
             padding: EdgeInsets.only(right: 20, left: 80),
