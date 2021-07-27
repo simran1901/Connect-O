@@ -1,3 +1,4 @@
+import 'package:connecto/screens/video_view.dart';
 import 'package:flutter/material.dart';
 
 // ignore: import_of_legacy_library_into_null_safe
@@ -21,6 +22,8 @@ class _CameraScreenState extends State<CameraScreen> {
   late CameraController _cameraController;
 
   late Future<void> cameraValue;
+  bool isRecording = false;
+  String videopath = '';
 
   @override
   void initState() {
@@ -71,15 +74,36 @@ class _CameraScreenState extends State<CameraScreen> {
                           size: 28,
                         ),
                       ),
-                      InkWell(
-                        onTap: () {
-                          takePhoto(context);
+                      GestureDetector(
+                        onLongPress: () async {
+                          final path = join(
+                              (await getTemporaryDirectory()).path,
+                              '${DateTime.now()}.mp4');
+                          await _cameraController.startVideoRecording(path);
+                          setState(() {
+                            isRecording = true;
+                            videopath = path;
+                          });
                         },
-                        child: Icon(
-                          Icons.panorama_fish_eye,
-                          color: Colors.white,
-                          size: 70,
-                        ),
+                        onLongPressUp: () async {
+                          await _cameraController.stopVideoRecording();
+                          setState(() {
+                            isRecording = false;
+                          });
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (ctx) => VideoView(path: videopath)));
+                        },
+                        onTap: () {
+                          if (!isRecording) takePhoto(context);
+                        },
+                        child: isRecording
+                            ? Icon(Icons.radio_button_on,
+                                color: Colors.red, size: 80)
+                            : Icon(
+                                Icons.panorama_fish_eye,
+                                color: Colors.white,
+                                size: 70,
+                              ),
                       ),
                       IconButton(
                         onPressed: () {},
