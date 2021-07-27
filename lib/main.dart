@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
-import './screens/home_screen.dart';
 
-void main() {
+// ignore: import_of_legacy_library_into_null_safe
+import 'package:camera/camera.dart';
+
+import './screens/home_screen.dart';
+import './screens/camera_screen.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  cameras = await availableCameras();
   runApp(MyApp());
 }
 

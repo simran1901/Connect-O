@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import '../pages/chat_page.dart';
+import '../pages/camera_page.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -77,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen>
       body: TabBarView(
         controller: _controller,
         children: [
-          Text('camera'),
+          CameraPage(),
           ChatPage(),
           Text('status'),
           Text('calls'),
