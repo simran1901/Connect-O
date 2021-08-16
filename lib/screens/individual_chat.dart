@@ -4,14 +4,17 @@ import 'package:flutter/material.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
+import '../models/message_model.dart';
 import '../models/chat_model.dart';
 import '../widgets/own_message_card.dart';
 import '../widgets/reply_card.dart';
 
 class IndividualChat extends StatefulWidget {
-  const IndividualChat({Key? key, required this.chat}) : super(key: key);
+  const IndividualChat({Key? key, required this.chat, required this.sourceChat})
+      : super(key: key);
 
   final ChatModel chat;
+  final ChatModel sourceChat;
 
   @override
   _IndividualChatState createState() => _IndividualChatState();
@@ -21,6 +24,9 @@ class _IndividualChatState extends State<IndividualChat> {
   bool show = false;
   FocusNode focusNode = FocusNode();
   late IO.Socket socket;
+  bool sendButton = false;
+
+  List<MessageModel> messages = [];
 
   TextEditingController _controller = TextEditingController();
 
@@ -37,15 +43,37 @@ class _IndividualChatState extends State<IndividualChat> {
     });
   }
 
-  void connect(){
+  void connect() {
     socket = IO.io('http://192.168.1.106:5000', <String, dynamic>{
-      'transports':['websocket'],
+      'transports': ['websocket'],
       'autoConnect': false,
     });
     socket.connect();
-    socket.emit('/test', 'hello world');
-    socket.onConnect((data)=>print('Connected.'));
+    socket.emit('signin', widget.sourceChat.id);
+    socket.onConnect((data) {
+      print('Connected.');
+      socket.on('message', (msg) {
+        print(data);
+        setMessage('destination', msg['message']);
+      });
+    });
     print(socket.connected);
+  }
+
+  void sendMessage(String message, int sourceId, int targetId) {
+    setMessage('source', message);
+    socket.emit('message', {
+      'message': message,
+      'sourceId': sourceId,
+      'targetId': targetId,
+    });
+  }
+
+  void setMessage(String type, String message) {
+    MessageModel messageModel = MessageModel(type: type, message: message);
+    setState(() {
+      messages.add(messageModel);
+    });
   }
 
   @override
@@ -151,12 +179,15 @@ class _IndividualChatState extends State<IndividualChat> {
                 children: [
                   Container(
                     height: size.height - 140,
-                    child: ListView(
+                    child: ListView.builder(
                       shrinkWrap: true,
-                      children: [
-                        OwnMessageCard(),
-                        ReplyCard(),
-                      ],
+                      itemCount: messages.length,
+                      itemBuilder: (ctx, index) {
+                        if (messages[index].type == 'source') {
+                          return OwnMessageCard(message: messages[index].message);
+                        }
+                        return ReplyCard(message: messages[index].message);
+                      },
                     ),
                   ),
                   Align(
@@ -181,6 +212,17 @@ class _IndividualChatState extends State<IndividualChat> {
                                   keyboardType: TextInputType.multiline,
                                   maxLines: 5,
                                   minLines: 1,
+                                  onChanged: (value) {
+                                    if (value.length > 0) {
+                                      setState(() {
+                                        sendButton = true;
+                                      });
+                                    } else {
+                                      setState(() {
+                                        sendButton = false;
+                                      });
+                                    }
+                                  },
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
                                     hintText: 'Type a message',
@@ -227,8 +269,19 @@ class _IndividualChatState extends State<IndividualChat> {
                                 backgroundColor: Theme.of(context).accentColor,
                                 radius: 25,
                                 child: IconButton(
-                                  icon: Icon(Icons.mic, color: Colors.white),
-                                  onPressed: () {},
+                                  icon: Icon(
+                                    sendButton ? Icons.send : Icons.mic,
+                                    color: Colors.white,
+                                  ),
+                                  onPressed: () {
+                                    if (sendButton) {
+                                      sendMessage(
+                                          _controller.text,
+                                          widget.sourceChat.id!,
+                                          widget.chat.id!);
+                                      _controller.clear();
+                                    }
+                                  },
                                 ),
                               ),
                             ),

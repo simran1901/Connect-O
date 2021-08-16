@@ -4,16 +4,17 @@ import '../models/chat_model.dart';
 import '../screens/individual_chat.dart';
 
 class CustomCard extends StatelessWidget {
-  const CustomCard({Key? key, required this.chat}) : super(key: key);
+  const CustomCard({Key? key, required this.chat, required this.sourceChat}) : super(key: key);
 
   final ChatModel chat;
+  final ChatModel sourceChat;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
         Navigator.of(context).push(
-            MaterialPageRoute(builder: (ctx) => IndividualChat(chat: chat)));
+            MaterialPageRoute(builder: (ctx) => IndividualChat(chat: chat, sourceChat: sourceChat)));
       },
       child: Column(
         children: [

@@ -18,7 +18,7 @@ class _CreateGroupState extends State<CreateGroup> {
       status: 'A full stack developer',
     ),
     ChatModel(
-      name: 'Balram',
+      name: 'Harsh',
       status: 'Flutter developer',
     ),
   ];

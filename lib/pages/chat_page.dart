@@ -5,29 +5,15 @@ import '../screens/select_contact.dart';
 import '../models/chat_model.dart';
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({Key? key}) : super(key: key);
+  const ChatPage({Key? key, required this.chatModels, required this.sourceChat}) : super(key: key);
+  final List<ChatModel> chatModels;
+  final ChatModel sourceChat;
 
   @override
   _ChatPageState createState() => _ChatPageState();
 }
 
 class _ChatPageState extends State<ChatPage> {
-  List<ChatModel> chats = [
-    ChatModel(
-      name: 'Simran',
-      isGroup: false,
-      currentMessage: 'Hello Simran',
-      time: '4:00',
-      icon: '',
-    ),
-    ChatModel(
-      name: 'Simran',
-      isGroup: false,
-      currentMessage: 'Hello Simran',
-      time: '4:00',
-      icon: '',
-    ),
-  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,9 +25,9 @@ class _ChatPageState extends State<ChatPage> {
         child: Icon(Icons.chat),
       ),
       body: ListView.builder(
-        itemCount: chats.length,
+        itemCount: widget.chatModels.length,
         itemBuilder: (BuildContext ctx, int i) {
-          return CustomCard(chat: chats[i]);
+          return CustomCard(chat: widget.chatModels[i], sourceChat: widget.sourceChat);
         },
       ),
     );
