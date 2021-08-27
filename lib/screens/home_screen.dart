@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../pages/chat_page.dart';
+import '../pages/status_page.dart';
 import '../pages/camera_page.dart';
 import '../models/chat_model.dart';
 
@@ -85,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen>
         children: [
           CameraPage(),
           ChatPage(chatModels: widget.chatModels, sourceChat: widget.sourceChat),
-          Text('status'),
+          StatusPage(),
           Text('calls'),
         ],
       ),
