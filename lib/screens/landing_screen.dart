@@ -20,11 +20,11 @@ class LandingScreen extends StatelessWidget {
                 'Welcome to WhatsApp',
                 style: TextStyle(
                   color: Colors.teal,
-                  fontSize: 25,
+                  fontSize: 23,
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              SizedBox(height: size.height / 11),
+              SizedBox(height: size.height / 12),
               Image.asset(
                 'assets/bg.png',
                 color: Colors.greenAccent[700],
