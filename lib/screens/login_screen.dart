@@ -1,4 +1,5 @@
 import 'package:connecto/models/country_model.dart';
+import 'package:connecto/screens/otp_screen.dart';
 import 'package:flutter/material.dart';
 
 import './country_screen.dart';
@@ -200,14 +201,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     'We will be verifying your phone number',
                     style: TextStyle(fontSize: 14),
                   ),
-                  SizedBox(height: 10),
+                  SizedBox(height: 13),
                   Text(
                     countryCode + ' ' + _controller.text,
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   ),
-                  SizedBox(height: 10),
+                  SizedBox(height: 13),
                   Text(
-                    'Is this Ok, or would you like to edit the number?',
+                    'Is this OK, or would you like to edit the number?',
                     style: TextStyle(fontSize: 13.5),
                   ),
                 ],
@@ -218,13 +219,21 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('Edit'),
+                child: Text('EDIT'),
               ),
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (ctx) => OtpScreen(
+                        number: _controller.text,
+                        countryCode: countryCode,
+                      ),
+                    ),
+                  );
                 },
-                child: Text('Ok'),
+                child: Text('OK'),
               ),
             ],
           );

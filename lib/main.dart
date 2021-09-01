@@ -5,6 +5,7 @@ import 'package:camera/camera.dart';
 
 // import './screens/home_screen.dart';
 // import './screens/login_screen.dart';
+import './screens/demo_login_screen.dart';
 import './screens/landing_screen.dart';
 import './screens/camera_screen.dart';
 
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Color(0xFF075E54),
         accentColor: Color(0xFF128C7E),
       ),
-      home: LandingScreen(),
+      home: DemoLoginScreen(),
     );
   }
 }
