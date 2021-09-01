@@ -1,6 +1,9 @@
 // ignore: import_of_legacy_library_into_null_safe
+import 'package:connecto/screens/camera_screen.dart';
+import 'package:connecto/screens/camera_view.dart';
 import 'package:emoji_picker/emoji_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
@@ -30,6 +33,9 @@ class _IndividualChatState extends State<IndividualChat> {
 
   TextEditingController _controller = TextEditingController();
   ScrollController _scrollController = ScrollController();
+
+  ImagePicker _picker = ImagePicker();
+  XFile? file;
 
   @override
   void initState() {
@@ -276,7 +282,14 @@ class _IndividualChatState extends State<IndividualChat> {
                                           ),
                                           IconButton(
                                             icon: Icon(Icons.camera_alt),
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: (ctx) =>
+                                                      CameraScreen(),
+                                                ),
+                                              );
+                                            },
                                           ),
                                         ],
                                       ),
@@ -357,22 +370,65 @@ class _IndividualChatState extends State<IndividualChat> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  iconPad(Icons.insert_drive_file, Colors.indigo, 'Document'),
+                  iconPad(
+                    Icons.insert_drive_file,
+                    Colors.indigo,
+                    'Document',
+                    () {},
+                  ),
                   SizedBox(width: 40),
-                  iconPad(Icons.camera_alt, Colors.pink, 'Camera'),
+                  iconPad(
+                    Icons.camera_alt,
+                    Colors.pink,
+                    'Camera',
+                    () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (ctx) => CameraScreen()),
+                      );
+                    },
+                  ),
                   SizedBox(width: 40),
-                  iconPad(Icons.insert_photo, Colors.purple, 'Gallery'),
+                  iconPad(
+                    Icons.insert_photo,
+                    Colors.purple,
+                    'Gallery',
+                    () async {
+                      file = await _picker.pickImage(
+                        source: ImageSource.gallery,
+                      );
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (ctx) => CameraView(path: file!.path),
+                        ),
+                      );
+                    },
+                  ),
                 ],
               ),
               SizedBox(height: 30),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  iconPad(Icons.headset, Colors.orange, 'Audio'),
+                  iconPad(
+                    Icons.headset,
+                    Colors.orange,
+                    'Audio',
+                    () {},
+                  ),
                   SizedBox(width: 40),
-                  iconPad(Icons.location_pin, Colors.teal, 'Location'),
+                  iconPad(
+                    Icons.location_pin,
+                    Colors.teal,
+                    'Location',
+                    () {},
+                  ),
                   SizedBox(width: 40),
-                  iconPad(Icons.person, Colors.blue, 'Contact'),
+                  iconPad(
+                    Icons.person,
+                    Colors.blue,
+                    'Contact',
+                    () {},
+                  ),
                 ],
               ),
             ],
@@ -382,9 +438,11 @@ class _IndividualChatState extends State<IndividualChat> {
     );
   }
 
-  Widget iconPad(IconData icon, Color color, String text) {
+  Widget iconPad(IconData icon, Color color, String text, Function onTap) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        onTap();
+      },
       child: Column(
         children: [
           CircleAvatar(
