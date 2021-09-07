@@ -6,7 +6,7 @@ import 'package:camera/camera.dart';
 // import './screens/home_screen.dart';
 // import './screens/login_screen.dart';
 import './screens/demo_login_screen.dart';
-import './screens/landing_screen.dart';
+// import './screens/landing_screen.dart';
 import './screens/camera_screen.dart';
 
 Future<void> main() async {

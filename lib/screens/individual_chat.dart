@@ -1,12 +1,12 @@
 // ignore: import_of_legacy_library_into_null_safe
-import 'package:connecto/screens/camera_screen.dart';
-import 'package:connecto/screens/camera_view.dart';
 import 'package:emoji_picker/emoji_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
+import './camera_screen.dart';
+import './camera_view.dart';
 import '../models/message_model.dart';
 import '../models/chat_model.dart';
 import '../widgets/own_message_card.dart';
@@ -61,7 +61,7 @@ class _IndividualChatState extends State<IndividualChat> {
       print('Connected.');
       socket.on('message', (msg) {
         print(data);
-        setMessage('destination', msg['message']);
+        setMessage('destination', msg['message'], msg['path']);
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
           duration: Duration(milliseconds: 300),
@@ -72,20 +72,22 @@ class _IndividualChatState extends State<IndividualChat> {
     print(socket.connected);
   }
 
-  void sendMessage(String message, int sourceId, int targetId) {
-    setMessage('source', message);
+  void sendMessage(String message, int sourceId, int targetId, String path) {
+    setMessage('source', message, path);
     socket.emit('message', {
       'message': message,
       'sourceId': sourceId,
       'targetId': targetId,
+      'path': path,
     });
   }
 
-  void setMessage(String type, String message) {
+  void setMessage(String type, String message, String path) {
     MessageModel messageModel = MessageModel(
       type: type,
       message: message,
       time: DateTime.now().toString().substring(10, 16),
+      path: path,
     );
     setState(() {
       messages.add(messageModel);
@@ -319,9 +321,11 @@ class _IndividualChatState extends State<IndividualChat> {
                                           curve: Curves.easeOut,
                                         );
                                         sendMessage(
-                                            _controller.text,
-                                            widget.sourceChat.id!,
-                                            widget.chat.id!);
+                                          _controller.text,
+                                          widget.sourceChat.id!,
+                                          widget.chat.id!,
+                                          '',
+                                        );
                                         _controller.clear();
                                         setState(() {
                                           sendButton = false;
