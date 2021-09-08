@@ -11,7 +11,8 @@ import 'camera_view.dart';
 List<CameraDescription> cameras = [];
 
 class CameraScreen extends StatefulWidget {
-  const CameraScreen({Key? key}) : super(key: key);
+  const CameraScreen({Key? key, required this.onImageSend}) : super(key: key);
+  final Function onImageSend;
 
   @override
   _CameraScreenState createState() => _CameraScreenState();
@@ -158,7 +159,11 @@ class _CameraScreenState extends State<CameraScreen> {
     // final path =
     //     join((await getTemporaryDirectory()).path, '${DateTime.now()}.png');
     XFile path = await _cameraController.takePicture();
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (ctx) => CameraView(path: path.path)));
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (ctx) =>
+            CameraView(path: path.path, onImageSend: widget.onImageSend),
+      ),
+    );
   }
 }

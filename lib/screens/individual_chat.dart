@@ -1,9 +1,13 @@
 // ignore: import_of_legacy_library_into_null_safe
+import 'dart:convert';
+
+import 'package:connecto/widgets/own_file_card.dart';
 import 'package:emoji_picker/emoji_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:http/http.dart' as http;
 
 import './camera_screen.dart';
 import './camera_view.dart';
@@ -36,6 +40,7 @@ class _IndividualChatState extends State<IndividualChat> {
 
   ImagePicker _picker = ImagePicker();
   XFile? file;
+  int popTime = 0;
 
   @override
   void initState() {
@@ -72,7 +77,7 @@ class _IndividualChatState extends State<IndividualChat> {
     print(socket.connected);
   }
 
-  void sendMessage(String message, int sourceId, int targetId, String path) {
+  void sendMessage(String message, int sourceId, int targetId, String? path) {
     setMessage('source', message, path);
     socket.emit('message', {
       'message': message,
@@ -82,7 +87,7 @@ class _IndividualChatState extends State<IndividualChat> {
     });
   }
 
-  void setMessage(String type, String message, String path) {
+  void setMessage(String type, String message, String? path) {
     MessageModel messageModel = MessageModel(
       type: type,
       message: message,
@@ -92,6 +97,35 @@ class _IndividualChatState extends State<IndividualChat> {
     setState(() {
       messages.add(messageModel);
     });
+  }
+
+  Future<void> onImageSend(String path, String message) async {
+    for (int i = 0; i < popTime; i++) {
+      Navigator.of(context).pop();
+    }
+    setState(() {
+      popTime = 0;
+    });
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse('http://192.168.1.106:5000/routes/addimage'),
+    );
+    request.files.add(await http.MultipartFile.fromPath('img', path));
+    request.headers.addAll({
+      'Content-type': 'multipart/form-data',
+    });
+    http.StreamedResponse response = await request.send();
+    var httpResponse = await http.Response.fromStream(response);
+    var data = json.decode(httpResponse.body);
+    print(data['path']);
+    setMessage('source', message, path);
+    socket.emit('message', {
+      'message': message,
+      'sourceId': widget.sourceChat.id,
+      'targetId': widget.chat.id,
+      'path': path,
+    });
+    print(response.statusCode);
   }
 
   @override
@@ -206,6 +240,12 @@ class _IndividualChatState extends State<IndividualChat> {
                           return Container(height: 70);
                         }
                         if (messages[index].type == 'source') {
+                          if (messages[index].path != null)
+                            return OwnFileCard(
+                              path: messages[index].path!,
+                              message: messages[index].message,
+                              time: messages[index].time,
+                            );
                           return OwnMessageCard(
                             message: messages[index].message,
                             time: messages[index].time,
@@ -285,10 +325,15 @@ class _IndividualChatState extends State<IndividualChat> {
                                           IconButton(
                                             icon: Icon(Icons.camera_alt),
                                             onPressed: () {
+                                              setState(() {
+                                                popTime = 2;
+                                              });
                                               Navigator.of(context).push(
                                                 MaterialPageRoute(
                                                   builder: (ctx) =>
-                                                      CameraScreen(),
+                                                      CameraScreen(
+                                                    onImageSend: onImageSend,
+                                                  ),
                                                 ),
                                               );
                                             },
@@ -324,7 +369,7 @@ class _IndividualChatState extends State<IndividualChat> {
                                           _controller.text,
                                           widget.sourceChat.id!,
                                           widget.chat.id!,
-                                          '',
+                                          null,
                                         );
                                         _controller.clear();
                                         setState(() {
@@ -386,8 +431,13 @@ class _IndividualChatState extends State<IndividualChat> {
                     Colors.pink,
                     'Camera',
                     () {
+                      setState(() {
+                        popTime = 3;
+                      });
                       Navigator.of(context).push(
-                        MaterialPageRoute(builder: (ctx) => CameraScreen()),
+                        MaterialPageRoute(
+                            builder: (ctx) =>
+                                CameraScreen(onImageSend: onImageSend)),
                       );
                     },
                   ),
@@ -397,12 +447,18 @@ class _IndividualChatState extends State<IndividualChat> {
                     Colors.purple,
                     'Gallery',
                     () async {
+                      setState(() {
+                        popTime = 2;
+                      });
                       file = await _picker.pickImage(
                         source: ImageSource.gallery,
                       );
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (ctx) => CameraView(path: file!.path),
+                          builder: (ctx) => CameraView(
+                            path: file!.path,
+                            onImageSend: onImageSend,
+                          ),
                         ),
                       );
                     },

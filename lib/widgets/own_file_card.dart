@@ -3,9 +3,16 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 class OwnFileCard extends StatelessWidget {
-  const OwnFileCard({Key? key, required this.path}) : super(key: key);
+  const OwnFileCard({
+    Key? key,
+    required this.path,
+    required this.message,
+    required this.time,
+  }) : super(key: key);
 
   final String path;
+  final String message;
+  final String time;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +36,12 @@ class OwnFileCard extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
-            child: Image.file(File(path)),
+            child: Column(
+              children: [
+                Image.file(File(path), fit: BoxFit.fitHeight),
+                Text(message),
+              ],
+            ),
           ),
         ),
       ),
