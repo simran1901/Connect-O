@@ -1,3 +1,4 @@
+import 'package:connecto/screens/call_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../pages/chat_page.dart';
@@ -6,7 +7,9 @@ import '../pages/camera_page.dart';
 import '../models/chat_model.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key, required this.chatModels, required this.sourceChat}) : super(key: key);
+  const HomeScreen(
+      {Key? key, required this.chatModels, required this.sourceChat})
+      : super(key: key);
 
   final List<ChatModel> chatModels;
   final ChatModel sourceChat;
@@ -85,9 +88,12 @@ class _HomeScreenState extends State<HomeScreen>
         controller: _controller,
         children: [
           CameraPage(),
-          ChatPage(chatModels: widget.chatModels, sourceChat: widget.sourceChat),
+          ChatPage(
+            chatModels: widget.chatModels,
+            sourceChat: widget.sourceChat,
+          ),
           StatusPage(),
-          Text('calls'),
+          CallScreen(),
         ],
       ),
     );

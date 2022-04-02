@@ -3,8 +3,16 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 class ReplyFileCard extends StatelessWidget {
-  const ReplyFileCard({Key? key, required this.path}) : super(key: key);
+  const ReplyFileCard({
+    Key? key,
+    required this.path,
+    required this.message,
+    required this.time,
+  }) : super(key: key);
+
   final String path;
+  final String message;
+  final String time;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +36,32 @@ class ReplyFileCard extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
-            child: Image.file(File(path)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Image.network(
+                    'http://192.168.1.106:5000/uploads/$path',
+                    fit: BoxFit.fitHeight,
+                  ),
+                ),
+                message.length > 0
+                    ? Container(
+                        height: 40,
+                        padding: EdgeInsets.only(left: 15, top: 8),
+                        child: Text(
+                          message,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      )
+                    : Container(),
+              ],
+            ),
           ),
         ),
       ),

@@ -1,8 +1,9 @@
 // ignore: import_of_legacy_library_into_null_safe
+import 'package:connecto/widgets/reply_file_card.dart';
+import 'package:emoji_picker/emoji_picker.dart';
+import 'package:connecto/widgets/own_file_card.dart';
 import 'dart:convert';
 
-import 'package:connecto/widgets/own_file_card.dart';
-import 'package:emoji_picker/emoji_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 // ignore: import_of_legacy_library_into_null_safe
@@ -250,11 +251,18 @@ class _IndividualChatState extends State<IndividualChat> {
                             message: messages[index].message,
                             time: messages[index].time,
                           );
+                        } else {
+                          if (messages[index].path != null)
+                            return ReplyFileCard(
+                              path: messages[index].path!,
+                              message: messages[index].message,
+                              time: messages[index].time,
+                            );
+                          return ReplyCard(
+                            message: messages[index].message,
+                            time: messages[index].time,
+                          );
                         }
-                        return ReplyCard(
-                          message: messages[index].message,
-                          time: messages[index].time,
-                        );
                       },
                     ),
                   ),
